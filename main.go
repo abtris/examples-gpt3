@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"os"
 
@@ -12,14 +13,13 @@ func main() {
 	gptToken := os.Getenv("GPT_TOKEN")
 	c := gogpt.NewClient(gptToken)
 	ctx := context.Background()
-
-	prompt := "Say poem about ice cream"
-
+	prompt := flag.String("prompt", "Say poem about ice cream", "prompt input for GPT-3")
+	flag.Parse()
 	req := gogpt.CompletionRequest{
 		Model:            "text-davinci-002",
 		MaxTokens:        256,
 		Temperature:      0.7,
-		Prompt:           prompt,
+		Prompt:           *prompt,
 		TopP:             1,
 		FrequencyPenalty: 0,
 		PresencePenalty:  0,
@@ -29,7 +29,7 @@ func main() {
 	if err != nil {
 		return
 	}
-	fmt.Printf("Prompt: %s\n\n", prompt)
+	fmt.Printf("Prompt: %s\n\n", *prompt)
 	for _, choice := range resp.Choices {
 		fmt.Println(choice.Text)
 	}
